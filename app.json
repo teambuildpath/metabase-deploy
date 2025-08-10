@@ -12,7 +12,12 @@
   "repository": "https://github.com/metabase/metabase",
   "logo": "https://avatars3.githubusercontent.com/u/10520629?v=3&s=200",
   "success_url": "/setup",
-  "env": {},
+  "env": {
+    "JAVA_OPTS": {
+      "description": "Java runtime options",
+      "value": "-Duser.home=/tmp -Djava.io.tmpdir=/tmp"
+    }
+  },
   "addons": [
     "heroku-postgresql"
   ],

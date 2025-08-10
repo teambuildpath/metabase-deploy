@@ -73,6 +73,11 @@ fi
 
 if [ -n "$HEROKU" ]; then
     echo "  -> Heroku detected"
+    
+    # Create necessary directories for SSH functionality
+    mkdir -p /tmp/.ssh
+    chmod 700 /tmp/.ssh
+    
     JAVA_OPTS+=" -XX:+UseContainerSupport"
     JAVA_OPTS+=" -XX:-UseGCOverheadLimit"          # Disable limit to amount of time spent in GC. Better slow than not working at all
     JAVA_OPTS+=" -Xverify:none"                    # Skip bytecode verification, the Heroku buildpack comes from us so it's already verified. Speed up launch slightly
@@ -84,6 +89,11 @@ fi
 JAVA_OPTS+=" -server"                  # Run in server mode. This is the default for 64-bit JVM
 JAVA_OPTS+=" -Djava.awt.headless=true" # don't try to start AWT. Not sure this does anything but better safe than wasting memory
 JAVA_OPTS+=" -Dfile.encoding=UTF-8"    # Use UTF-8
+
+# Fix for Apache SSHD home directory issues on Heroku
+JAVA_OPTS+=" -Duser.home=/tmp"         # Set user home to /tmp which exists on Heroku
+JAVA_OPTS+=" -Djava.io.tmpdir=/tmp"    # Ensure temp directory is set
+JAVA_OPTS+=" -Dsshd.hostKeyPath=/tmp/.ssh" # Set SSH host key path
 
 # Set timezone using the JAVA_TIMEZONE variable if present
 if [ "$JAVA_TIMEZONE"]; then
